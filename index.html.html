@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dashboard SIS Perú - Reglas de Consistencia (Primer Nivel)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #0284c7;
+  --primary-light: #e0f2fe;
+  --primary-dark: #0369a1;
+  --success: #059669;
+  --success-light: #d1fae5;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+  --purple: #7c3aed;
+  --purple-light: #ede9fe;
+  --dark: #1e293b;
+  --gray: #64748b;
+  --light: #f8fafc;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--light);
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+header {
+  background: linear-gradient(135deg, #0f172a 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1.1rem;
+  color: var(--primary-light);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.container {
+  max-width: 1250px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Navegación por Pestañas */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.tab-btn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray);
+  cursor: pointer;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary-light);
+}
+
+.tab-btn.active {
+  background-color: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tarjetas Profesionales */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.card-title h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.card-title p {
+  font-size: 0.85rem;
+  color: var(--gray);
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2rem;
+  background: var(--light);
+  border: 1px solid var(--border);
+}
+
+.tag.dx-p { background: var(--warning-light); color: var(--warning); border-color: rgba(217,119,6,0.2); }
+.tag.dx-d { background: var(--success-light); color: var(--success); border-color: rgba(5,150,105,0.2); }
+.tag.dx-r { background: var(--primary-light); color: var(--primary); border-color: rgba(2,132,199,0.2); }
+.tag.lvl { background: var(--purple-light); color: var(--purple); border-color: rgba(124,58,237,0.2); }
+.tag.code { font-family: 'JetBrains Mono', monospace; background: var(--light); color: var(--dark); }
+
+.info-box {
+  background: var(--light);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--primary);
+  font-size: 0.85rem;
+  color: var(--dark);
+  margin-top: 1rem;
+}
+
+/* Tablas */
+.table-wrapper {
+  background: var(--white);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background-color: var(--light);
+  font-weight: 700;
+  color: var(--gray);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background-color: rgba(248, 250, 252, 0.8); }
+
+.code-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--primary-dark);
+  background: var(--primary-light);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+}
+
+/* Colores Específicos */
+.bg-medico { background: linear-gradient(to right, #e0f2fe, white); }
+.icon-medico { background: #bae6fd; color: #0369a1; }
+
+.bg-enfermera { background: linear-gradient(to right, #d1fae5, white); }
+.icon-enfermera { background: #a7f3d0; color: #047857; }
+
+.bg-obstetra { background: linear-gradient(to right, #fce7f3, white); }
+.icon-obstetra { background: #fbcfe8; color: #be185d; }
+
+.bg-odonto { background: linear-gradient(to right, #e0e7ff, white); }
+.icon-odonto { background: #c7d2fe; color: #4338ca; }
+
+.bg-psico { background: linear-gradient(to right, #ede9fe, white); }
+.icon-psico { background: #ddd6fe; color: #6d28d9; }
+
+.bg-nutri { background: linear-gradient(to right, #dcfce7, white); }
+.icon-nutri { background: #bbf7d0; color: #15803d; }
+
+.bg-tec { background: linear-gradient(to right, #f1f5f9, white); }
+.icon-tec { background: #e2e8f0; color: #334155; }
+
+.pkg-prev { border-left: 4px solid var(--success); }
+.pkg-recu { border-left: 4px solid var(--danger); }
+.pkg-mix { border-left: 4px solid var(--warning); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Códigos Prestacionales por perfil Profesional</h1>
+  <p>Guía interactiva completa de los códigos prestacionales del SIS por tipo de profesional, nivel de establecimiento, paquete de Curso de Vida, tipo de atención (Preventivo / Recuperativo) y tipo de diagnóstico (Presuntivo / Definitivo / Repetitivo).</p>
+</header>
+
+<div class="container">
+  
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('profesionales')">1. Perfiles Profesionales</button>
+    <button class="tab-btn" onclick="switchTab('paquetes')">2. Paquetes de Atención</button>
+    <button class="tab-btn" onclick="switchTab('procedimientos')">3. Procedimientos y Diagnósticos (RC)</button>
+    <button class="tab-btn" onclick="switchTab('niveles')">4. Niveles de EESS</button>
+  </div>
+
+  <!-- SECCIÓN 1: PROFESIONALES -->
+  <div id="profesionales" class="tab-content active">
+    <h2 style="margin-bottom: 1.5rem; color: var(--dark);">Capacidad Prestacional por Perfil Profesional</h2>
+    <div class="grid-cards">
+      
+      <!-- Médico -->
+      <div class="card">
+        <div class="card-header bg-medico">
+          <div class="card-icon icon-medico">🩺</div>
+          <div class="card-title">
+            <h3>Médico General / Especialista</h3>
+            <p>Capacidad Clínica Plena</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="section-title">Niveles Permitidos</div>
+          <div class="tags"><span class="tag lvl">I-2</span><span class="tag lvl">I-3</span><span class="tag lvl">I-4</span></div>
+          
+          <div class="section-title">Diagnósticos Autorizados</div>
+          <div class="tags">
+            <span class="tag dx-p">Presuntivo (P)</span><span class="tag dx-d">Definitivo (D)</span><span class="tag dx-r">Repetitivo (R)</span>
+          </div>
+          
+          <div class="section-title">Códigos Prestacionales (Principales)</div>
+          <div class="tags">
+            <span class="tag code">056 (Consulta)</span><span class="tag code">062 (Emergencia)</span><span class="tag code">065 (Hospitalización)</span>
+            <span class="tag code">001 (CRED)</span><span class="tag code">009 (Prenatal)</span><span class="tag code">054 (Parto)</span>
+            <span class="tag code">023 (Próstata)</span><span class="tag code">024 (PAP)</span><span class="tag code">300 (Telemedicina)</span>
+          </div>
+          <div class="info-box">Único profesional que puede establecer diagnósticos Definitivos (D) en patologías complejas médicas. Puede prescribir todo el petitorio farmacológico nivel I.</div>
+        </div>
+      </div>
+
+      <!-- Enfermería -->
+      <div class="card">
+        <div class="card-header bg-enfermera">
+          <div class="card-icon icon-enfermera">💉</div>
+          <div class="card-title">
+            <h3>Lic. en Enfermería</h3>
+            <p>Prevención, Cuidados y Tamizajes</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="section-title">Niveles Permitidos</div>
+          <div class="tags"><span class="tag lvl">I-1</span><span class="tag lvl">I-2</span><span class="tag lvl">I-3</span><span class="tag lvl">I-4</span></div>
+          
+          <div class="section-title">Diagnósticos Autorizados</div>
+          <div class="tags">
+            <span class="tag dx-p">Presuntivo (P)</span><span class="tag dx-r">Repetitivo (R)</span>
+          </div>
+          
+          <div class="section-title">Códigos Prestacionales (Principales)</div>
+          <div class="tags">
+            <span class="tag code">001, 118, 119 (CRED)</span><span class="tag code">007 (Micronutrientes)</span><span class="tag code">008 (Antiparasitario)</span>
+            <span class="tag code">903, 904 (Adulto/Mayor)</span><span class="tag code">019 (Agudeza Visual)</span><span class="tag code">906 (Consulta no médica)</span>
+          </div>
+          <div class="info-box">Centrado en códigos preventivos. No establece diagnósticos médicos definitivos, pero puede emitir Presuntivos en tamizajes (ej. agudeza visual) y Repetitivos para controles de crónicos.</div>
+        </div>
+      </div>
+
+      <!-- Obstetra -->
+      <div class="card">
+        <div class="card-header bg-obstetra">
+          <div class="card-icon icon-obstetra">🤰</div>
+          <div class="card-title">
+            <h3>Obstetra</h3>
+            <p>Salud Sexual y Reproductiva</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="section-title">Niveles Permitidos</div>
+          <div class="tags"><span class="tag lvl">I-2</span><span class="tag lvl">I-3</span><span class="tag lvl">I-4</span></div>
+          
+          <div class="section-title">Diagnósticos Autorizados</div>
+          <div class="tags">
+            <span class="tag dx-p">Presuntivo (P)</span><span class="tag dx-d">Definitivo (D)*</span><span class="tag dx-r">Repetitivo (R)</span>
+          </div>
+          
+          <div class="section-title">Códigos Prestacionales (Principales)</div>
+          <div class="tags">
+            <span class="tag code">009 (Prenatal)</span><span class="tag code">010 (Puerperio)</span><span class="tag code">018 (Planificación)</span>
+            <span class="tag code">024 (PAP)</span><span class="tag code">054 (Parto Vaginal)</span><span class="tag code">074 (ITS)</span>
+          </div>
+          <div class="info-box">*El diagnóstico Definitivo (D) solo es válido dentro de su ámbito: embarazo, parto normal, tamizaje de cáncer de cuello uterino y salud reproductiva.</div>
+        </div>
+      </div>
+
+      <!-- Odontólogo -->
+      <div class="card">
+        <div class="card-header bg-odonto">
+          <div class="card-icon icon-odonto">🦷</div>
+          <div class="card-title">
+            <h3>Odontólogo/a</h3>
+            <p>Salud Bucal</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="section-title">Niveles Permitidos</div>
+          <div class="tags"><span class="tag lvl">I-3</span><span class="tag lvl">I-4</span></div>
+          
+          <div class="section-title">Diagnósticos Autorizados</div>
+          <div class="tags">
+            <span class="tag dx-p">Presuntivo (P)</span><span class="tag dx-d">Definitivo (D)*</span><span class="tag dx-r">Repetitivo (R)</span>
+          </div>
+          
+          <div class="section-title">Códigos Prestacionales (Principales)</div>
+          <div class="tags">
+            <span class="tag code">020 (Salud Bucal)</span><span class="tag code">021 (Caries)</span><span class="tag code">911 (Higiene)</span>
+            <span class="tag code">057, 058 (Restauración)</span><span class="tag code">059 (Exodoncia)</span><span class="tag code">070 (Especializada)</span>
+          </div>
+          <div class="info-box">*Definitivos (D) restringidos al aparato estomatognático. Obligatorio vincular procedimientos dentales con analgésicos/antibióticos (RC-12).</div>
+        </div>
+      </div>
+
+      <!-- Psicólogo y Nutricionista -->
+      <div class="card">
+        <div class="card-header bg-psico">
+          <div class="card-icon icon-psico">🧠</div>
+          <div class="card-title">
+            <h3>Psicólogo y Nutricionista</h3>
+            <p>Salud Mental y Dietética</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="section-title">Niveles Permitidos</div>
+          <div class="tags"><span class="tag lvl">I-3</span><span class="tag lvl">I-4</span></div>
+          
+          <div class="section-title">Diagnósticos Autorizados</div>
+          <div class="tags">
+            <span class="tag dx-p">Presuntivo (P)</span><span class="tag dx-d">Definitivo (D)*</span><span class="tag dx-r">Repetitivo (R)</span>
+          </div>
+          
+          <div class="section-title">Códigos Prestacionales (Principales)</div>
+          <div class="tags">
+            <span class="tag code">022 (Salud Mental)</span><span class="tag code">005 (Nutrición)</span><span class="tag code">906 (Consulta Ext.)</span>
+          </div>
+          <div class="info-box">*Definitivos solo en sus áreas (CIE-10 F para psicólogos, y diagnósticos E/Z nutricionales para nutricionistas). No prescriben medicamentos.</div>
+        </div>
+      </div>
+
+      <!-- Técnicos -->
+      <div class="card">
+        <div class="card-header bg-tec">
+          <div class="card-icon icon-tec">🏥</div>
+          <div class="card-title">
+            <h3>Técnico Enfermería / Farmacia</h3>
+            <p>Apoyo Asistencial</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="section-title">Niveles Permitidos</div>
+          <div class="tags"><span class="tag lvl">I-1</span><span class="tag lvl">I-2</span><span class="tag lvl">I-3</span><span class="tag lvl">I-4</span></div>
+          
+          <div class="section-title">Diagnósticos Autorizados</div>
+          <div class="tags">
+            <span class="tag dx-r">Repetitivo (R)</span>
+          </div>
+          
+          <div class="section-title">Códigos Prestacionales (Principales)</div>
+          <div class="tags">
+            <span class="tag code">061 (Tópico)</span><span class="tag code">901 (Farmacia)</span>
+            <span class="tag code">071 (Lab. - Téc. Laboratorio)</span>
+          </div>
+          <div class="info-box">Prohibido registrar diagnósticos nuevos (P o D). Solo transcriben el Dx Repetitivo (R) del médico para despacho de farmacia o atenciones básicas.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: PAQUETES DE ATENCIÓN -->
+  <div id="paquetes" class="tab-content">
+    <h2 style="margin-bottom: 1.5rem; color: var(--dark);">Agrupación de Códigos por Paquetes de Atención</h2>
+    <p style="margin-bottom: 1rem; color: var(--gray);">La auditoría agrupa los códigos según su naturaleza (Preventivo vs. Recuperativo). Los códigos preventivos exigen tamizajes y diagnósticos de screening (P), mientras los recuperativos implican tratamientos (D o R).</p>
+    
+    <div class="grid-cards" style="grid-template-columns: 1fr;">
+      
+      <div class="card pkg-prev">
+        <div class="card-body">
+          <h3 style="color: var(--success); margin-bottom: 0.5rem;">🛡️ Paquetes Preventivos (Promoción de la Salud)</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--gray);">Predominan diagnósticos Z (CIE-10). Diagnósticos de tipo: <strong>Presuntivo (P)</strong> para tamizajes con sospecha, o <strong>Definitivo (D)</strong> para acciones confirmadas como vacunas o suplementos.</p>
+          <table style="background: transparent; box-shadow: none; border: none;">
+            <tr>
+              <td style="width: 25%; font-weight: 700;">Paquete Niño</td>
+              <td><span class="code-badge">001, 118, 119</span> (CRED) | <span class="code-badge">007</span> (Micronutrientes) | <span class="code-badge">008</span> (Antiparasitario) | <span class="code-badge">016</span> (Estimulación)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Paquete Adolescente / Joven / Adulto</td>
+              <td><span class="code-badge">017</span> (Integral Adol.) | <span class="code-badge">903, 904</span> (Integral Adulto/Mayor) | <span class="code-badge">018</span> (Planificación) | <span class="code-badge">902</span> (Preconcepcional)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Prevención Oncológica y Tamizajes</td>
+              <td><span class="code-badge">023</span> (Próstata) | <span class="code-badge">024</span> (PAP) | <span class="code-badge">025</span> (Mama) | <span class="code-badge">019</span> (Agudeza Visual) | <span class="code-badge">022</span> (Salud Mental)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Paquete Materno (Control)</td>
+              <td><span class="code-badge">009</span> (Prenatal) | <span class="code-badge">010</span> (Puerperio) | <span class="code-badge">015</span> (Dx Embarazo)</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card pkg-recu">
+        <div class="card-body">
+          <h3 style="color: var(--danger); margin-bottom: 0.5rem;">💊 Paquetes Recuperativos y de Rehabilitación</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--gray);">Atención de daños y enfermedades. Exigen diagnóstico <strong>Definitivo (D)</strong> si se confirma la enfermedad, o <strong>Repetitivo (R)</strong> para enfermedades crónicas. RC-12 obliga a registrar medicamentos y/o procedimientos.</p>
+          <table style="background: transparent; box-shadow: none; border: none;">
+            <tr>
+              <td style="width: 25%; font-weight: 700;">Ambulatorio General</td>
+              <td><span class="code-badge">056</span> (Consulta Externa) | <span class="code-badge">906</span> (Consulta No Médica) | <span class="code-badge">060, 075</span> (Extramural/Domiciliaria) | <span class="code-badge">300</span> (Telemedicina)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Atención del Parto / Neonato</td>
+              <td><span class="code-badge">050</span> (Atención RN) | <span class="code-badge">054</span> (Parto Vaginal) | <span class="code-badge">055</span> (Cesárea) | <span class="code-badge">051</span> (Internamiento RN)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Urgencias y Hospitalización</td>
+              <td><span class="code-badge">061</span> (Tópico) | <span class="code-badge">062, 063</span> (Emergencia) | <span class="code-badge">064</span> (Cirugía Amb.) | <span class="code-badge">065, 066</span> (Internamiento I-4)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Enfermedades Específicas</td>
+              <td><span class="code-badge">074</span> (ITS) | <span class="code-badge">026, 027, 053</span> (VIH Profilaxis/Tratamiento) | <span class="code-badge">200</span> (Rehabilitación)</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card pkg-mix">
+        <div class="card-body">
+          <h3 style="color: var(--warning); margin-bottom: 0.5rem;">🦷 Salud Bucal y 🔬 Apoyo</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--gray);">Mixto preventivo/recuperativo y servicios transversales.</p>
+          <table style="background: transparent; box-shadow: none; border: none;">
+            <tr>
+              <td style="width: 25%; font-weight: 700;">Odontológico</td>
+              <td>Prev: <span class="code-badge">020, 021, 911</span> | Recup: <span class="code-badge">057, 058</span> (Curaciones) | <span class="code-badge">059</span> (Exodoncia) | <span class="code-badge">070, 900</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700;">Apoyo al Dx y Tto</td>
+              <td><span class="code-badge">071</span> (Laboratorio/Imágenes) | <span class="code-badge">011, 013</span> (Apoyo Gestante)</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: PROCEDIMIENTOS RC -->
+  <div id="procedimientos" class="tab-content">
+    <h2 style="margin-bottom: 0.5rem; color: var(--dark);">Procedimientos Relevantes y Auditoría Diagnóstica</h2>
+    <p style="margin-bottom: 2rem; color: var(--gray);">Basado en las Reglas de Consistencia (RC-12, RC-34, RC-88, RC-91). Si no se asocia el procedimiento correcto al diagnóstico y código prestacional, el FUA será observado o rechazado automáticamente.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:15%">Código Prest.</th>
+            <th style="width:25%">Diagnóstico/Condición</th>
+            <th style="width:40%">Procedimiento / Insumo Obligatorio (CPMS/SISMED)</th>
+            <th style="width:20%">Regla Aplicada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="code-badge">001, 118, 119</span> CRED</td>
+            <td>Z001, Z002 (Control de rutina)</td>
+            <td><strong>Obligatorio:</strong> CPMS 99381-99385 (Evaluación preventiva según edad).</td>
+            <td>RC-12, RC-88</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">007</span> Micronutrientes</td>
+            <td>Z2982 (Medida profiláctica)</td>
+            <td><strong>Obligatorio:</strong> SISMED 20575 (Multimicronutrientes) o Sulfato Ferroso.</td>
+            <td>RC-12, RC-35</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">009</span> Prenatal</td>
+            <td>Z349 (Gestante normal) / Z359 (Alto riesgo)</td>
+            <td><strong>Obligatorio:</strong> Consulta médica/obstétrica + Suplemento Ac. Fólico/Hierro.</td>
+            <td>RC-12, RC-27</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">011</span> Lab. Gestante</td>
+            <td>Gestante</td>
+            <td><strong>Obligatorio:</strong> Hemograma (85025), Sífilis (86592), VIH, Glucosa.</td>
+            <td>RC-12</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">024</span> Detección PAP</td>
+            <td>Z014 (Examen ginecológico)</td>
+            <td><strong>Obligatorio:</strong> CPMS 88141 (Papanicolaou / Citología).</td>
+            <td>RC-12, RC-88</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">057, 058</span> Rest. Dental</td>
+            <td>K02 (Caries)</td>
+            <td><strong>Obligatorio:</strong> Procedimiento Restauración + Medicamento (Analgésico/Antibiótico).</td>
+            <td>RC-12</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">022, 904</span> Salud Mental</td>
+            <td>Patológico (F00-F99, T74, Z60)</td>
+            <td><strong>Obligatorio:</strong> Registro de diagnóstico patológico si el tamizaje da positivo.</td>
+            <td>RC-34</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">056</span> Consulta Externa</td>
+            <td>Enfermedades Recuperativas</td>
+            <td><strong>Obligatorio:</strong> La consulta no puede cerrarse vacía. Requiere recetar medicamento, insumo o solicitar apoyo al Dx.</td>
+            <td>RC-12</td>
+          </tr>
+          <tr>
+            <td><span class="code-badge">054, 055</span> Parto/Cesárea</td>
+            <td>O80, O82 (Parto único)</td>
+            <td><strong>Obligatorio:</strong> Registro del Recién Nacido (DNI/CNV) en el FUA materno.</td>
+            <td>RC-33</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4: NIVELES -->
+  <div id="niveles" class="tab-content">
+    <h2 style="margin-bottom: 0.5rem; color: var(--dark);">Restricciones por Nivel de Establecimiento (I-1 al I-4)</h2>
+    <p style="margin-bottom: 2rem; color: var(--gray);">Las Reglas de Consistencia (RC-47, RC-92) bloquean códigos en establecimientos que no cuentan con la categoría o el profesional idóneo.</p>
+
+    <div class="grid-cards">
+      <div class="card">
+        <div class="card-body">
+          <div style="font-size: 2rem; font-weight: 900; color: var(--success); margin-bottom: 0.5rem;">I-1</div>
+          <h3 style="margin-bottom: 1rem; color: var(--dark);">Puesto de Salud (Sin Médico)</h3>
+          <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 1rem;">Atendido principalmente por personal técnico y/o licenciada de enfermería.</p>
+          <div class="section-title">Qué PUEDEN registrar:</div>
+          <ul style="font-size: 0.85rem; color: var(--dark); padding-left: 1.2rem; margin-bottom: 1rem;">
+            <li>Promoción y Prevención básica (<span class="code-badge">001, 118, 007, 008, 019</span>)</li>
+            <li>Tópico / Curaciones simples (<span class="code-badge">061</span>)</li>
+            <li>Apoyo al tratamiento y visitas (<span class="code-badge">901, 060, 075</span>)</li>
+          </ul>
+          <div class="section-title" style="color: var(--danger)">BLOQUEADO (Rechazo RC-92):</div>
+          <p style="font-size: 0.85rem; color: var(--dark);">Consultas médicas (056), atenciones obstétricas especializadas, urgencias severas, odontología.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div style="font-size: 2rem; font-weight: 900; color: var(--primary); margin-bottom: 0.5rem;">I-2</div>
+          <h3 style="margin-bottom: 1rem; color: var(--dark);">Puesto de Salud (Con Médico)</h3>
+          <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 1rem;">Equipo básico de salud: Médico general, enfermera, obstetra.</p>
+          <div class="section-title">Qué PUEDEN registrar (Suman al I-1):</div>
+          <ul style="font-size: 0.85rem; color: var(--dark); padding-left: 1.2rem; margin-bottom: 1rem;">
+            <li>Consulta externa médica (<span class="code-badge">056</span>)</li>
+            <li>Atención prenatal y materno-infantil (<span class="code-badge">009, 010</span>)</li>
+            <li>Tamizajes oncológicos (<span class="code-badge">023, 024, 025</span>)</li>
+            <li>Apoyo al Dx básico (<span class="code-badge">071</span>)</li>
+          </ul>
+          <div class="section-title" style="color: var(--danger)">BLOQUEADO (Rechazo RC-92):</div>
+          <p style="font-size: 0.85rem; color: var(--dark);">Atención de partos, internamiento, procedimientos odontológicos, emergencias graves.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div style="font-size: 2rem; font-weight: 900; color: var(--purple); margin-bottom: 0.5rem;">I-3</div>
+          <h3 style="margin-bottom: 1rem; color: var(--dark);">Centro de Salud (Sin Internamiento)</h3>
+          <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 1rem;">Equipo multidisciplinario. Se suman odontólogo, psicólogo, nutricionista.</p>
+          <div class="section-title">Qué PUEDEN registrar (Suman al I-2):</div>
+          <ul style="font-size: 0.85rem; color: var(--dark); padding-left: 1.2rem; margin-bottom: 1rem;">
+            <li>Todo el Paquete Odontológico (<span class="code-badge">020, 057, 059, 900</span>)</li>
+            <li>Consultas especializadas (Nutrición, Psicología) (<span class="code-badge">906</span>)</li>
+            <li>Atención de emergencias cortas / Urgencias (<span class="code-badge">062, 063</span>)</li>
+            <li>Parto inminente ambulatorio (<span class="code-badge">054</span> - Solo si el EESS está habilitado)</li>
+          </ul>
+          <div class="section-title" style="color: var(--danger)">BLOQUEADO (Rechazo RC-92):</div>
+          <p style="font-size: 0.85rem; color: var(--dark);">Hospitalización/Internamientos prolongados (065, 066).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div style="font-size: 2rem; font-weight: 900; color: var(--warning); margin-bottom: 0.5rem;">I-4</div>
+          <h3 style="margin-bottom: 1rem; color: var(--dark);">C.S. con Internamiento</h3>
+          <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 1rem;">Máxima resolutividad del 1er Nivel. Atención 24/7 y camas obstétricas.</p>
+          <div class="section-title">Qué PUEDEN registrar (Suman al I-3):</div>
+          <ul style="font-size: 0.85rem; color: var(--dark); padding-left: 1.2rem; margin-bottom: 1rem;">
+            <li>Internamiento sin intervención Qx (<span class="code-badge">065</span>)</li>
+            <li>Internamiento con cirugía menor (<span class="code-badge">066</span>)</li>
+            <li>Internamiento RN patología no Qx (<span class="code-badge">051</span>)</li>
+            <li>Parto Vaginal estándar (<span class="code-badge">054</span>)</li>
+            <li>Transfusiones (<span class="code-badge">069</span>)</li>
+          </ul>
+          <div class="section-title" style="color: var(--danger)">BLOQUEADO (Rechazo RC-92):</div>
+          <p style="font-size: 0.85rem; color: var(--dark);">Cirugías Mayores (067), Unidad de Cuidados Intensivos UCI (068).</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
